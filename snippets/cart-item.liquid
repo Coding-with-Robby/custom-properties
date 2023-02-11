@@ -16,14 +16,6 @@
           <li>{{ option.name }}: {{ option.value }}</li>
         {% endif %}
       {% endfor %}
-
-      {% for prop in item.properties %}
-        {% assign firstChar = prop[0] | slice: 0 %}
-
-        {% unless prop[1] == blank or firstChar == '_' %}
-          <li>{{ prop[0] }}: {{ prop[1] }}</li>
-        {% endunless %}
-      {% endfor %}
     </ul>
   </div>
 
