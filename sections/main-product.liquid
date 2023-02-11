@@ -1,0 +1,231 @@
+<div id="main-product--{{ section.id }}" class="main-product">
+  <div class="width">
+    <div class="main-product-left">
+      {% if product.selected_or_first_available_variant.featured_image %}
+        {% assign featured = product.selected_or_first_available_variant.featured_image %}
+        <img class="main-product-image" id="product-image" src="{{ featured | image_url }}">
+      {% else %}
+        {% assign featured = product.featured_image %}
+        <img class="main-product-image" id="product-image" src="{{ featured | image_url }}">
+      {% endif %}
+
+      <ul class="main-product-image-thumbs">
+        {% for image in product.images %}
+          <li class="{% if image == featured %}selected{% endif %}"><img src="{{ image | image_url: master }}"></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="main-product-right">
+      <h1>{{ product.title }}</h1>
+
+      <div class="main-product-prices">
+        <p class="main-product-compare {% unless product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}hide{% endunless %}">
+          {{ product.selected_or_first_available_variant.compare_at_price | money }}
+        </p>
+
+        <p class="main-product-price">
+          {{ product.selected_or_first_available_variant.price | money }}
+        </p>
+      </div>
+
+      <div class="main-product-description">
+        {{ product.description }}
+      </div>
+
+      {% form 'product', product %}
+        <input
+          class="main-product-id hide"
+          type="hidden"
+          name="id"
+          value="{{ product.selected_or_first_available_variant.id }}"
+        >
+
+        {% if product.variants.size > 1 %}
+          <div class="main-product-options">
+            {% for option in product.options_with_values %}
+              <fieldset class="main-product-option">
+                <legend>{{ option.name }}</legend>
+                <div class="main-product-option-radios">
+                  {% for value in option.values %}
+                    <div class="main-product-option-radio">
+                      <input
+                        {% if option.selected_value == value %}
+                          checked
+                        {% endif %}
+                        type="radio"
+                        name="{{ option.name }}"
+                        value="{{ value }}"
+                        class="hide"
+                        id="{{ option.name | handlize }}-{{ value | handlize }}"
+                      >
+                      <label for="{{ option.name | handlize }}-{{ value | handlize }}">
+                        {{ value }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if product.metafields.custom.ring_fields %}
+          <div class="main-product-property">
+            <label>Engraving</label>
+            <input type="text" name="properties[Engraving]">
+          </div>
+
+          <div class="main-product-property">
+            <label>Size</label>
+            <select type="text" name="properties[Size]">
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+            </select>
+          </div>
+        {% endif %}
+
+        <div class="main-product-option">
+          <label for="quantity">Quantity</label>
+          <div>
+            <div class="quantity-selector">
+              <button type="button" class="quantity-selector-minus">
+                {% include 'minus.svg' %}
+              </button>
+              <input
+                id="quantity"
+                name="quantity"
+                value="1"
+                class="quantity-selector-inputselector-"
+              >
+              <button type="button" class="quantity-selector-plus">
+                {% include 'plus.svg' %}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button
+          {% unless product.selected_or_first_available_variant.available %}
+            disabled
+          {% endunless %}
+          class="button full main-product-add-to-cart"
+          type="submit"
+          class="main-product-add"
+        >
+          {% if product.selected_or_first_available_variant.available %}
+            {{ 'General.add_to_cart' | t }}
+          {% else %}
+            Out of Stock
+          {% endif %}
+        </button>
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Product json
+  var product = {{ product | json }}
+
+  // Root div
+  var root = document.querySelector('#main-product--{{ section.id }}')
+
+  // Radio change
+  root.querySelectorAll('.main-product-option input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+          // Find selected options
+          var selectedOptions = []
+
+          root.querySelectorAll('.main-product-option input[type="radio"]:checked').forEach(radio => {
+              selectedOptions.push(radio.value)
+          })
+
+          // Finding the matched variant
+          var matchedVariant = product.variants.find(variant => {
+              var pass = true
+
+              for (var i = 0; i < selectedOptions.length; i++) {
+                  if (selectedOptions.indexOf(variant.options[i]) === -1) {
+                      pass = false
+                      break
+                  }
+              }
+
+              return pass
+          })
+
+          // Change product form variant id
+          root.querySelector('.main-product-id').value = matchedVariant.id
+
+          // Change url
+          var url = new URLParse(window.location.href, true)
+          url.query.variant = matchedVariant.id
+          window.history.replaceState(null, null, url.toString());
+
+          // Change prices
+          root.querySelector('.main-product-price').textContent = formatMoney(matchedVariant.price, "{{ shop.money_format }}")
+          root.querySelector('.main-product-compare').textContent = formatMoney(matchedVariant.compare_at_price, "{{ shop.money_format }}")
+
+          matchedVariant.compare_at_price > matchedVariant.price ?
+              root.querySelector('.main-product-compare').classList.remove('hide') :
+              root.querySelector('.main-product-compare').classList.add('hide')
+
+          // Change image
+          if (matchedVariant.featured_image) {
+              root.querySelector('.main-product-image').setAttribute('src', matchedVariant.featured_image.src)
+              root.querySelector('.main-product-image-thumbs li.selected').classList.remove('selected')
+              root.querySelectorAll('.product-image-thumbs li')[matchedVariant.featured_image.position - 1].classList.add('selected')
+          }
+
+          // Change button
+          var add = root.querySelector(".main-product-add-to-cart")
+
+          if (matchedVariant.available) {
+              add.textContent = "Add to Cart"
+              add.disabled = false
+          } else {
+              add.textContent = "Out of Stock"
+              add.disabled = true
+          }
+      })
+  })
+
+  // Image change
+  root.querySelectorAll('.main-product-image-thumbs li').forEach(li => {
+      li.addEventListener('click', () => {
+          root.querySelector('.main-product-image-thumbs li.selected').classList.remove('selected')
+          li.classList.add('selected')
+
+          root.querySelector('.main-product-image').setAttribute('src', li.querySelector('img').getAttribute('src'))
+
+      })
+  })
+
+  // Quantity change
+  root.querySelector('.quantity-selector-plus').addEventListener('click', () => {
+      var currentVal = Number(root.querySelector('#quantity').value)
+      root.querySelector('#quantity').value = currentVal + 1
+  })
+
+  root.querySelector('.quantity-selector-minus').addEventListener('click', () => {
+      var currentVal = Number(root.querySelector('#quantity').value)
+
+      if (currentVal > 1) {
+          root.querySelector('#quantity').value = currentVal - 1
+      }
+  })
+</script>
+
+{% schema %}
+{
+  "name": "Main product",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Main product"
+    }
+  ]
+}
+{% endschema %}

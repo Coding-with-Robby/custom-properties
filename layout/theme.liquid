@@ -1,0 +1,13 @@
+<html>
+  <head>
+    {{ content_for_header }}
+    {{ 'style.css' | asset_url | stylesheet_tag }}
+  </head>
+  <body>
+    {% section 'header' %}
+    {{ content_for_layout }}
+    {% section 'footer' %}
+    <script src="https://cdn.jsdelivr.net/npm/url-parse@1.5.10/dist/url-parse.min.js"></script>
+    {{ 'scripts.js' | asset_url | script_tag }}
+  </body>
+</html>

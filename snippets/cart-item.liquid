@@ -1,0 +1,47 @@
+<div class="cart-item" data-key="{{ item.key }}">
+  <div class="cart-item-image">
+    <a href="{{ item.url }}">
+      <img src="{{ item.image | image_url: width: 400 }}">
+    </a>
+  </div>
+
+  <div class="cart-item-product">
+    <h3>
+      <a href="{{ item.url }}">{{ item.product.title }}</a>
+    </h3>
+
+    <ul>
+      {% for option in item.options_with_values %}
+        {% if option.value != 'Default Title' %}
+          <li>{{ option.name }}: {{ option.value }}</li>
+        {% endif %}
+      {% endfor %}
+
+      {% for prop in item.properties %}
+        {% assign firstChar = prop[0] | slice: 0 %}
+
+        {% unless prop[1] == blank or firstChar == '_' %}
+          <li>{{ prop[0] }}: {{ prop[1] }}</li>
+        {% endunless %}
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="cart-item-quantity">
+    <div class="cart-quantity-selector quantity-selector">
+      <button type="button">{% render 'minus.svg' %}</button>
+      <input type="text" readonly value="{{ item.quantity }}">
+      <button class="plus" type="button">{% render 'plus.svg' %}</button>
+    </div>
+  </div>
+
+  <div class="cart-item-total">
+    <span class="line-item-price">{{ item.final_line_price | money }}</span>
+  </div>
+
+  <div class="cart-item-remove">
+    <a class="remove-item" href="{{ item.url_to_remove }}">
+      {% render 'x.svg' %}
+    </a>
+  </div>
+</div>

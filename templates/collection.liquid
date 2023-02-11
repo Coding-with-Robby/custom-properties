@@ -1,0 +1,17 @@
+<div class="featured-collection">
+  <div class="width">
+    {% paginate collection.products by 20 %}
+      <div class="grid">
+        {% for product in collection.products %}
+          {% render 'product-grid-item', product: product %}
+        {% endfor %}
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-inner">
+          {{ paginate | default_pagination }}
+        </div>
+      </div>
+    {% endpaginate %}
+  </div>
+</div>

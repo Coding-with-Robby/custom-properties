@@ -1,0 +1,8 @@
+<a class="product-grid-item" href="{{ product.url }}">
+  <img src="{{ product.featured_image | image_url: width: 400 }}">
+
+  <span class="product-grid-item-text">
+    <h3>{{ product.title }}</h3>
+    <p class="product-grid-item-price">{{ product.price | money }}</p>
+  </span>
+</a>

@@ -1,0 +1,17 @@
+{% paginate blog.articles by 4 %}
+
+    <h1>{{ blog.title }}</h1>
+
+    {% for article in blog.articles %}
+        <div>
+            <a href="{{ article.url }}">
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.author }}</p>
+                <div>{{ article.excerpt }}</div>
+            </a>
+        </div>
+    {% endfor %}
+
+
+  {{ paginate | default_pagination }}
+{% endpaginate %}

@@ -1,0 +1,29 @@
+<header class="header">
+  <div class="width">
+    <a href="/" class="header-logo">
+      {% render 'logo.svg' %}
+    </a>
+
+    <input type="checkbox" id="header-toggle-menu" class="hide">
+
+    <label class="header-burger" for="header-toggle-menu">
+      {% render 'hamburger.svg' %}
+    </label>
+
+    <ul class="header-nav">
+      {% for link in linklists['main-menu'].links -%}
+        <li>{{ link.title | link_to: link.url }}</li>
+      {%- endfor %}
+      <li>
+        <a href="{{ routes.cart_url }}">Cart ({{ cart.item_count }})</a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": []
+}
+{% endschema %}

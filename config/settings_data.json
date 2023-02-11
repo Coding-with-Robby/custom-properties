@@ -1,0 +1,20 @@
+{
+  "current": {
+    "bg": "#ffffff",
+    "text_color": "#000000",
+    "show_search": true,
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {}
+      },
+      "e4bd7727-f903-4f3f-a665-d26c4a8fdd11": {
+        "type": "related-products",
+        "settings": {}
+      }
+    },
+    "content_for_index": [
+      "e4bd7727-f903-4f3f-a665-d26c4a8fdd11"
+    ]
+  }
+}

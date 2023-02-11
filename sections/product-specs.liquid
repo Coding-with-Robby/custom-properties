@@ -1,0 +1,51 @@
+<div class="product-specs">
+  <div class="width">
+
+    <h2>Specifications</h2>
+
+    <div class="product-specs-row">
+      <h3>Height</h3>
+      <span>{{ section.settings.height}}</span>
+    </div>
+
+    <div class="product-specs-row">
+      <h3>Length</h3>
+      <span>{{ section.settings.length}}</span>
+    </div>
+
+    <div class="product-specs-row">
+      <h3>Thickness</h3>
+      <span>{{ section.settings.thickness}}</span>
+    </div>
+
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "Product Specs",
+  "settings": [
+    {
+      "type": "text",
+      "id": "length",
+      "label": "Length"
+    },
+    {
+      "type": "text",
+      "id": "height",
+      "label": "Height"
+    },
+    {
+      "type": "text",
+      "id": "thickness",
+      "label": "thickness"
+    }
+  ],
+  "presets": [
+      {
+          "name": "Product Specs"
+      }
+  ]
+}
+{% endschema %}

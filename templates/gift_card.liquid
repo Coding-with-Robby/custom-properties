@@ -1,0 +1,26 @@
+{% layout none %}
+
+{{ 'vendor/qrcode.js' | shopify_asset_url | script_tag }}
+
+
+<div id="qr-code"></div>
+<script>
+  new QRCode(document.getElementById('qr-code'), {
+    text: '{{ gift_card.qr_identifier }}',
+    width: 120,
+    height: 120
+  });
+</script>
+
+<h2>{{ gift_card.balance | money }}</h2>
+<p>{{ gift_card.code }}</p>
+
+{% if gift_card.pass_url %}
+  <a href="{{ gift_card.pass_url }}" >
+    <img id="apple-wallet-badge"
+      src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}"
+      width="120"
+      height="40"
+      alt="Add To Apple Wallet">
+    </a>
+{% endif %}

@@ -1,0 +1,50 @@
+<div class="cart" data-money-format="{{ shop.money_format }}">
+  <div class="width">
+    {% form 'cart', cart %}
+      <h1>Cart</h1>
+
+      {% if cart.empty? %}
+        <div class="cart-empty">
+          <p>Your cart is empty.</p>
+          <a class="button" href="/">Keep shopping</a>
+        </div>
+
+      {% else %}
+        {% for item in cart.items %}
+          {% render 'cart-item', item: item %}
+        {% endfor %}
+
+        <div class="cart-notes">
+          <textarea name="note" placeholder="Add special instructions">{{ cart.note }}</textarea>
+        </div>
+
+        <div class="cart-totals">
+          <p>
+            Discounts: <strong id="total-discount">{{ cart.total_discounts | money }}</strong>
+          </p>
+          <p>
+            Total: <strong id="total-price">{{ cart.total_price | money }}</strong>
+          </p>
+        </div>
+
+        <div class="cart-buttons">
+          <button type="submit" name="checkout" class="button full">Checkout</button>
+        </div>
+      {% endif %}
+    {% endform %}
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+{{ 'cart.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "Cart",
+  "presets": [
+    {
+      "name": "Cart"
+    }
+  ]
+}
+{% endschema %}

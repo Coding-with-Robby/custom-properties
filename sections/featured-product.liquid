@@ -1,0 +1,33 @@
+{% assign product = all_products[section.settings.product] %}
+
+<div>
+  <h2>{{ section.settings.heading }}</h2>
+  <h3>{{ product.title }}</h3>
+  <a href="{{ product.url }}">View product</a>
+</div>
+
+{% schema %}
+{
+  "name": "Featured product",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading text"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured product",
+      "settings": {
+        "heading": "Check out this product"
+      }
+    }
+  ]
+}
+{% endschema %}
